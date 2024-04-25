@@ -44,13 +44,16 @@ public class BlogService {
         return blogRepository.findBlogById(blogId);
     }
 
-    public Blog getBlogByTitle(String title,Integer userId) {
+   public Blog getBlogByTitle(Integer userid , String title ){
+        User user = authRepository.findUserById(userid);
         Blog blog = blogRepository.findBlogByTitle(title);
-        if (blog == null || !blog.getUser().getId().equals(userId))
-            throw new ApiException("Blog not found or does not belong to the specified user");
 
-        return blogRepository.findBlogByTitle(title);
+        if (blog.getUser().equals(user)) {
+            return blog;
+        }
+        return null;
     }
+
 
 
     public void deleteBlog(Integer userid , Integer blogId ){
