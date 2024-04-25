@@ -20,41 +20,41 @@ public class BlogController {
 
 
 
-    @PostMapping("/users/{userId}/blogs")
-    public ResponseEntity createBlog(@PathVariable Integer userId, @Valid @RequestBody Blog blog) {
-        Blog createdBlog = blogService.createBlog(userId, blog);
+    @PostMapping("/users/blogs")
+    public ResponseEntity createBlog(@AuthenticationPrincipal User user,@RequestBody @Valid Blog blog) {
+        Blog createdBlog = blogService.createBlog(user.getId(), blog);
         return ResponseEntity.status(200).body(createdBlog);
     }
 
-    @GetMapping("/users/{userId}/blogs")
-    public ResponseEntity<List<Blog>> getAllBlogsByUserId(@PathVariable Integer userId) {
-        List<Blog> blogs = blogService.getAllBlogsByUserId(userId);
+    @GetMapping("/users/blogs")
+    public ResponseEntity<List<Blog>> getAllBlogsByUserId(@AuthenticationPrincipal User user) {
+        List<Blog> blogs = blogService.getAllBlogsByUserId(user.getId());
         return ResponseEntity.ok(blogs);
     }
 
-    @GetMapping("/users/{userId}/blogs/{blogId}")
-    public ResponseEntity getBlogById(@PathVariable Integer userId, @PathVariable Integer blogId) {
-        Blog blog = blogService.getBlogById(blogId, userId);
+    @GetMapping("/users/blogs/{blogId}")
+    public ResponseEntity getBlogById(@AuthenticationPrincipal User user, Integer blogId) {
+        Blog blog = blogService.getBlogById(user.getId(), blogId);
         return ResponseEntity.ok(blog);
     }
 
-    @GetMapping("/users/{userId}/blogs/title/{title}")
-    public ResponseEntity getBlogByTitle(@PathVariable Integer userId, @PathVariable String title) {
-        Blog blog = blogService.getBlogByTitle(title, userId);
-        return ResponseEntity.ok(blog);
+    @GetMapping("/users/blogs/title/{title}")
+    public ResponseEntity getBlogByTitle(@AuthenticationPrincipal User user, String title) {
+        return ResponseEntity.status(200).body(blogService.getBlogByTitle(user.getId(), title));
+
     }
 
 
 
     @DeleteMapping("/delete/{blogId}")
-    public ResponseEntity deleteBlog(@AuthenticationPrincipal User user, @PathVariable Integer blogId){
+    public ResponseEntity deleteBlog(@AuthenticationPrincipal User user, Integer blogId){
         blogService.deleteBlog(user.getId(), blogId);
         return ResponseEntity.status(200).body("blog deleted");
     }
 
 
     @PutMapping("/update/{blogId}")
-    public ResponseEntity updateBlog(@AuthenticationPrincipal User user, @PathVariable Integer blogId , @RequestBody @Valid Blog blog){
+    public ResponseEntity updateBlog(@AuthenticationPrincipal User user, Integer blogId , @RequestBody @Valid Blog blog){
         blogService.updateBlog(user.getId(), blogId, blog);
         return ResponseEntity.status(200).body("blog updated");
     }
